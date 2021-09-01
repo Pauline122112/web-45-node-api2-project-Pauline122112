@@ -4,15 +4,17 @@ const Posts = require("./posts-model");
 const router = express.Router();
 
 //1 | GET    | /api/posts | Returns **an array of all the post objects** contained in the database    
-router.get("/api/posts", (req, res) => {
-	Posts.find(req.query)
-		.then((posts) => {
-			res.status(200).json(posts);
+router.get("/", (req, res) => {
+	Posts.find()
+		.then(posts=> {
+			res.json(posts);
 		})
-		.catch((error) => {
+		.catch(error => {
 			console.log(error);
 			res.status(500).json({
 				message: "The posts information could not be retrieved",
+                error: error.message,
+                stack: error.stack,
 			});
 		});
 });
