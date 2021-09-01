@@ -42,6 +42,24 @@ router.get('/:id', (req, res) => {
 
 //3  | POST   | /api/posts              | Creates a post using the information sent inside the request body and returns **the newly created post object**  
 
+router.post('/', (req, res) => {
+    
+    Posts.add()
+    .then(posts => {
+        if(posts) {
+            res.status(201).json(posts)
+        }else {
+            res.status(400).json({ message: 'Please provide title and contents for the post'})
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        res.status(500).json({
+            message: 'There was an error while saving the post to the database'
+        })
+    })
+
+})
 
 //4 | PUT    | /api/posts/:id          | Updates the post with the specified id using data from the request body and **returns the modified document**, not the original 
 
@@ -52,4 +70,4 @@ router.get('/:id', (req, res) => {
 //6 | GET    | /api/posts/:id/comments | Returns an **array of all the comment objects** associated with the post with the specified id 
 
 
-module.exports = router;
+module.exports = router
