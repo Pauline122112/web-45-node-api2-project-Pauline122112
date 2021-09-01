@@ -49,16 +49,22 @@ router.post('/', (req, res) => {
             res.status(400).json({
                 message: 'Please provide title and contents for the post'
             })
-        }else {
+        } else {
             Posts.insert({ title, contents })
-							.then((stuff) => {
-								res.status(201).json({ posts });
-							})
-							.catch((error) => {
-								console.log(error);
+				.then(({id}) => {
+				return Posts.findById(id)
+				})
+                    .then(posts => {
+                        res.status(201).json(posts)
+                    } )
+					.catch((error) => {
+					console.log(error);
 								res.status(500).json({
 									message:
 										"There was an error while saving the post to the database",
+                                    error: error.message,
+                                    stack: error.stack,
+
 								});
 							});
            
