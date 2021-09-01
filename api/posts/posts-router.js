@@ -79,7 +79,7 @@ router.post('/', (req, res) => {
   
 
 
-
+//I DID NOT LIKE THIS ONE!!!!
 //4 | PUT    | /api/posts/:id          | Updates the post with the specified id using data from the request body and **returns the modified document**, not the original 
 router.put("/:id", (req, res) => {
 	const { title, contents } = req.body;
@@ -124,6 +124,24 @@ router.put("/:id", (req, res) => {
 
 
 // 5 | DELETE | /api/posts/:id          | Removes the post with the specified id and returns the **deleted post object** 
+router.delete('/:id', (req, res) => {
+    Posts.remove(req.params.id)
+    .then(posts => {
+        if (posts > 0) {
+            res.status(200).json(posts)
+        } else {
+            res.status(404).json({
+                message: 'message: "The post with the specified ID does not exist'
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({
+                    message: 'The comments information could not be retrieved'
+                })
+            })
+        }
+    })
+})
 
 
 //6 | GET    | /api/posts/:id/comments | Returns an **array of all the comment objects** associated with the post with the specified id 
