@@ -1,4 +1,5 @@
 // implement your posts router here
+const { json } = require("express");
 const express = require("express");
 const Posts = require("./posts-model");
 const router = express.Router();
@@ -80,21 +81,45 @@ router.post('/', (req, res) => {
 
 
 //4 | PUT    | /api/posts/:id          | Updates the post with the specified id using data from the request body and **returns the modified document**, not the original 
-router.put('/:id', (req,res) => {
-    const changes = req.body
-    Posts.update(req.params.id, changes)
-    .then(posts => {
-        if (posts) {
-        res.status(200).json(posts);
-        } else {
-            res.status(404).json({
+router.put("/:id", (req, res) => {
+	const { title, contents } = req.body;
+	if (!title || !contents) {
+		res.status(400).json({
 			message: "Please provide title and contents for the post",
-			});							
-        }
-       
-    })
+		});
+	} else {
+		Posts.findById(req.params.id)
+        .then(stuff => {
+            if (!stuff) {
+                res.status(404).json({
+				message: "The post with the specified ID does not exist",
+			    });
+            } else {
+                return Posts.update(req.params.id, req.body);
+            }
+        })
+        .then(data => {
+           if (data) {
+               return Posts.findById(req.params.id)
+           }
+        })
+        .then(posts => {
+            if (posts) {
+            res.json(posts);
+            }
+           
+        })
 
-})
+			.catch((error) => {
+				console.log(error);
+				res.status(500).json({
+					message: "The post information could not be modified",
+					error: error.message,
+					stack: error.stack,
+				});
+			});
+	}
+});
 
 
 
